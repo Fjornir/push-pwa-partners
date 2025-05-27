@@ -50,6 +50,7 @@
 
   <!-- Третья строка: кнопки для переключения пушей -->
   <div class="input-group mdl-cell mdl-cell--12-col" style="justify-content: center;">
+    <button id="pushnzt" class="mdl-button mdl-js-button mdl-button--raised">nzt пуши</button>
     <button id="push3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша в день</button>
     <button id="push4" class="mdl-button mdl-js-button mdl-button--raised">4 пуша в день</button>
   </div>
@@ -83,6 +84,16 @@
     "ПТ 10:28", "ПТ 14:23", "ПТ 18:38", "ПТ 21:43",
     "СБ 10:30", "СБ 14:25", "СБ 18:40", "СБ 21:45",
     "ВС 10:32", "ВС 14:27", "ВС 18:42", "ВС 21:47"
+  ];
+
+  const schedulenzt = [
+    "ПН 09:34", "ПН 19:39",
+    "ВТ 09:34", "ВТ 19:39",
+    "СР 09:34", "СР 19:39",
+    "ЧТ 09:34", "ЧТ 19:39",
+    "ПТ 09:34", "ПТ 19:39",
+    "СБ 11:31", "СБ 16:25", "СБ 19:55",
+    "ВС 11:31", "ВС 16:25", "ВС 19:55"
   ];
 
   let schedule = schedule4; // По умолчанию отображаем 4 пуша в день
@@ -242,6 +253,11 @@ runAutomation();`;
 
   document.getElementById('push4').addEventListener('click', function() {
     schedule = schedule4;
+    updateOutput();
+  });
+
+  document.getElementById('pushnzt').addEventListener('click', function() {
+    schedule = schedulenzt;
     updateOutput();
   });
 
