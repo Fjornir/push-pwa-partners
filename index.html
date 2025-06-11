@@ -10,6 +10,7 @@
       max-width: 800px;
       margin: 40px auto;
       padding: 20px;
+      position: relative;
     }
     .input-group {
       display: flex;
@@ -53,11 +54,20 @@
     .buttons-container button:active {
       background-color: #d0d0d0;
     }
+    .version {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 12px;
+      color: #666;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
 
 <div class="container mdl-shadow--2dp mdl-color--white mdl-grid">
+  <div class="version">v1.1</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="input-group mdl-cell mdl-cell--12-col">
@@ -90,7 +100,6 @@
       Скопировать
     </button>
   </div>
-
 </div>
 
 <script>
