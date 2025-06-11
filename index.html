@@ -24,8 +24,34 @@
       font-family: monospace;
     }
     .button-right {
-        min-width: 100px;
+      min-width: 100px;
       white-space: nowrap;
+    }
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .buttons-container button {
+      min-width: 120px;
+      height: 36px;
+      margin: 5px;
+      font-weight: 500;
+      text-transform: none;
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .buttons-container button:hover {
+      background-color: #e0e0e0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .buttons-container button:active {
+      background-color: #d0d0d0;
     }
   </style>
 </head>
@@ -49,10 +75,13 @@
   </div>
 
   <!-- Третья строка: кнопки для переключения пушей -->
-  <div class="input-group mdl-cell mdl-cell--12-col" style="justify-content: center;">
+  <div class="buttons-container mdl-cell mdl-cell--12-col">
     <button id="pushnzt" class="mdl-button mdl-js-button mdl-button--raised">nzt пуши</button>
     <button id="push3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша в день</button>
     <button id="push4" class="mdl-button mdl-js-button mdl-button--raised">4 пуша в день</button>
+    <button id="pushdato" class="mdl-button mdl-js-button mdl-button--raised">10 пушей</button>
+    <button id="pushmonth" class="mdl-button mdl-js-button mdl-button--raised">4 пуша месяц</button>
+    <button id="pushmonth3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша месяц</button>
   </div>
 
   <!-- Четвертая строка: кнопка скопировать -->
@@ -75,6 +104,15 @@
     "СБ 14:26", "СБ 18:41", "СБ 21:46",
     "ВС 14:28", "ВС 18:43", "ВС 21:48"
   ];
+  const scheduledato = [
+    "ПН 11:16", "ПН 12:31", "ПН 13:36","ПН 14:16", "ПН 15:31", "ПН 16:36","ПН 17:16", "ПН 18:31", "ПН 19:36", "ПН 20:36",
+    "ВТ 11:16", "ВТ 12:31", "ВТ 13:36","ВТ 14:16", "ВТ 15:31", "ВТ 16:36","ВТ 17:16", "ВТ 18:31", "ВТ 19:36", "ВТ 20:36",
+    "СР 11:16", "СР 12:31", "СР 13:36","СР 14:16", "СР 15:31", "СР 16:36","СР 17:16", "СР 18:31", "СР 19:36", "СР 20:36",
+    "ЧТ 11:16", "ЧТ 12:31", "ЧТ 13:36","ЧТ 14:16", "ЧТ 15:31", "ЧТ 16:36","ЧТ 17:16", "ЧТ 18:31", "ЧТ 19:36", "ЧТ 20:36",
+    "ПТ 11:16", "ПТ 12:31", "ПТ 13:36","ПТ 14:16", "ПТ 15:31", "ПТ 16:36","ПТ 17:16", "ПТ 18:31", "ПТ 19:36", "ПТ 20:36",
+    "СБ 11:16", "СБ 12:31", "СБ 13:36","СБ 14:16", "СБ 15:31", "СБ 16:36","СБ 17:16", "СБ 18:31", "СБ 19:36", "СБ 20:36",
+    "ВС 11:16", "ВС 12:31", "ВС 13:36","ВС 14:16", "ВС 15:31", "ВС 16:36","ВС 17:16", "ВС 18:31", "ВС 19:36", "ВС 20:36",
+  ];
 
   const schedule4 = [
     "ПН 10:20", "ПН 14:15", "ПН 18:30", "ПН 21:35",
@@ -96,6 +134,26 @@
     "ВС 11:31", "ВС 16:25", "ВС 19:55"
   ];
 
+  const scheduleMonth = [
+    "ПН 10:00", "ПН 14:00", "ПН 18:00", "ПН 21:00",
+    "ВТ 10:00", "ВТ 14:00", "ВТ 18:00", "ВТ 21:00",
+    "СР 10:00", "СР 14:00", "СР 18:00", "СР 21:00",
+    "ЧТ 10:00", "ЧТ 14:00", "ЧТ 18:00", "ЧТ 21:00",
+    "ПТ 10:00", "ПТ 14:00", "ПТ 18:00", "ПТ 21:00",
+    "СБ 10:00", "СБ 14:00", "СБ 18:00", "СБ 21:00",
+    "ВС 10:00", "ВС 14:00", "ВС 18:00", "ВС 21:00"
+  ];
+
+  const scheduleMonth3 = [
+    "ПН 10:00", "ПН 14:00", "ПН 18:00",
+    "ВТ 10:00", "ВТ 14:00", "ВТ 18:00",
+    "СР 10:00", "СР 14:00", "СР 18:00",
+    "ЧТ 10:00", "ЧТ 14:00", "ЧТ 18:00",
+    "ПТ 10:00", "ПТ 14:00", "ПТ 18:00",
+    "СБ 10:00", "СБ 14:00", "СБ 18:00",
+    "ВС 10:00", "ВС 14:00", "ВС 18:00"
+  ];
+
   let schedule = schedule4; // По умолчанию отображаем 4 пуша в день
   let array1 = [];
   let array2 = [];
@@ -109,6 +167,40 @@
       const [day, time] = item.split(' ');
       const text1 = array1[index] || "";
       const text2 = array2[index] || "";
+      
+      // Если это режим месячных пушей, создаем специальный формат
+      if (schedule === scheduleMonth) {
+        // Группируем по 4 пуша
+        const groupIndex = Math.floor(index / 4);
+        
+        // Получаем 4 значения для заголовка и контента
+        const header1 = array1[groupIndex * 4] || "";
+        const header2 = array1[groupIndex * 4 + 1] || "";
+        const header3 = array1[groupIndex * 4 + 2] || "";
+        const header4 = array1[groupIndex * 4 + 3] || "";
+        
+        const content1 = array2[groupIndex * 4] || "";
+        const content2 = array2[groupIndex * 4 + 1] || "";
+        const content3 = array2[groupIndex * 4 + 2] || "";
+        const content4 = array2[groupIndex * 4 + 3] || "";
+        
+        return `${day},${time},"{Push=(${header1}|${header2}|${header3}|${header4})}","{Push=(${content1}|${content2}|${content3}|${content4})}"`;
+      } else if (schedule === scheduleMonth3) {
+        // Группируем по 3 пуша
+        const groupIndex = Math.floor(index / 3);
+        
+        // Получаем 3 значения для заголовка и контента
+        const header1 = array1[groupIndex * 3] || "";
+        const header2 = array1[groupIndex * 3 + 1] || "";
+        const header3 = array1[groupIndex * 3 + 2] || "";
+        
+        const content1 = array2[groupIndex * 3] || "";
+        const content2 = array2[groupIndex * 3 + 1] || "";
+        const content3 = array2[groupIndex * 3 + 2] || "";
+        
+        return `${day},${time},"{Push=(${header1}|${header2}|${header3})}","{Push=(${content1}|${content2}|${content3})}"`;
+      }
+      
       return `${day},${time},"${text1}","${text2}"`;
     }).join('\n')}`.trim();
 
@@ -258,6 +350,21 @@ runAutomation();`;
 
   document.getElementById('pushnzt').addEventListener('click', function() {
     schedule = schedulenzt;
+    updateOutput();
+  });
+
+   document.getElementById('pushdato').addEventListener('click', function() {
+    schedule = scheduledato;
+    updateOutput();
+  });
+
+  document.getElementById('pushmonth').addEventListener('click', function() {
+    schedule = scheduleMonth;
+    updateOutput();
+  });
+
+  document.getElementById('pushmonth3').addEventListener('click', function() {
+    schedule = scheduleMonth3;
     updateOutput();
   });
 
