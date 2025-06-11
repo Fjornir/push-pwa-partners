@@ -170,33 +170,40 @@
       
       // Если это режим месячных пушей, создаем специальный формат
       if (schedule === scheduleMonth) {
-        // Группируем по 4 пуша
-        const groupIndex = Math.floor(index / 4);
+        // Определяем группу на основе времени
+        let timeGroup;
+        if (time === "10:00") timeGroup = 0;      // утро
+        else if (time === "14:00") timeGroup = 1; // день
+        else if (time === "18:00") timeGroup = 2; // вечер
+        else if (time === "21:00") timeGroup = 3; // поздний вечер
         
-        // Получаем 4 значения для заголовка и контента
-        const header1 = array1[groupIndex * 4] || "";
-        const header2 = array1[groupIndex * 4 + 1] || "";
-        const header3 = array1[groupIndex * 4 + 2] || "";
-        const header4 = array1[groupIndex * 4 + 3] || "";
+        // Получаем 4 значения для заголовка и контента для текущей временной группы
+        const header1 = array1[timeGroup * 4] || "";
+        const header2 = array1[timeGroup * 4 + 1] || "";
+        const header3 = array1[timeGroup * 4 + 2] || "";
+        const header4 = array1[timeGroup * 4 + 3] || "";
         
-        const content1 = array2[groupIndex * 4] || "";
-        const content2 = array2[groupIndex * 4 + 1] || "";
-        const content3 = array2[groupIndex * 4 + 2] || "";
-        const content4 = array2[groupIndex * 4 + 3] || "";
+        const content1 = array2[timeGroup * 4] || "";
+        const content2 = array2[timeGroup * 4 + 1] || "";
+        const content3 = array2[timeGroup * 4 + 2] || "";
+        const content4 = array2[timeGroup * 4 + 3] || "";
         
         return `${day},${time},"{Push=(${header1}|${header2}|${header3}|${header4})}","{Push=(${content1}|${content2}|${content3}|${content4})}"`;
       } else if (schedule === scheduleMonth3) {
-        // Группируем по 3 пуша
-        const groupIndex = Math.floor(index / 3);
+        // Определяем группу на основе времени
+        let timeGroup;
+        if (time === "10:00") timeGroup = 0;      // утро
+        else if (time === "14:00") timeGroup = 1; // день
+        else if (time === "18:00") timeGroup = 2; // вечер
         
-        // Получаем 3 значения для заголовка и контента
-        const header1 = array1[groupIndex * 3] || "";
-        const header2 = array1[groupIndex * 3 + 1] || "";
-        const header3 = array1[groupIndex * 3 + 2] || "";
+        // Получаем 3 значения для заголовка и контента для текущей временной группы
+        const header1 = array1[timeGroup * 3] || "";
+        const header2 = array1[timeGroup * 3 + 1] || "";
+        const header3 = array1[timeGroup * 3 + 2] || "";
         
-        const content1 = array2[groupIndex * 3] || "";
-        const content2 = array2[groupIndex * 3 + 1] || "";
-        const content3 = array2[groupIndex * 3 + 2] || "";
+        const content1 = array2[timeGroup * 3] || "";
+        const content2 = array2[timeGroup * 3 + 1] || "";
+        const content3 = array2[timeGroup * 3 + 2] || "";
         
         return `${day},${time},"{Push=(${header1}|${header2}|${header3})}","{Push=(${content1}|${content2}|${content3})}"`;
       }
