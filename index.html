@@ -89,6 +89,7 @@
     <button id="pushnzt" class="mdl-button mdl-js-button mdl-button--raised">nzt пуши</button>
     <button id="push3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша в день</button>
     <button id="push4" class="mdl-button mdl-js-button mdl-button--raised">4 пуша в день</button>
+    <button id="push5" class="mdl-button mdl-js-button mdl-button--raised">5 пушей в день</button>
     <button id="pushdato" class="mdl-button mdl-js-button mdl-button--raised">10 пушей</button>
     <button id="pushmonth" class="mdl-button mdl-js-button mdl-button--raised">4 пуша месяц</button>
     <button id="pushmonth3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша месяц</button>
@@ -131,6 +132,16 @@
     "ПТ 10:28", "ПТ 14:23", "ПТ 18:38", "ПТ 21:43",
     "СБ 10:30", "СБ 14:25", "СБ 18:40", "СБ 21:45",
     "ВС 10:32", "ВС 14:27", "ВС 18:42", "ВС 21:47"
+  ];
+
+  const schedule5 = [
+    "ПН 12:00", "ПН 16:00", "ПН 18:00", "ПН 19:30", "ПН 20:00",
+    "ВТ 12:00", "ВТ 16:00", "ВТ 18:00", "ВТ 19:30", "ВТ 20:00",
+    "СР 12:00", "СР 16:00", "СР 18:00", "СР 19:30", "СР 20:00",
+    "ЧТ 12:00", "ЧТ 16:00", "ЧТ 18:00", "ЧТ 19:30", "ЧТ 20:00",
+    "ПТ 12:00", "ПТ 16:00", "ПТ 18:00", "ПТ 19:30", "ПТ 20:00",
+    "СБ 12:00", "СБ 16:00", "СБ 18:00", "СБ 19:30", "СБ 20:00",
+    "ВС 12:00", "ВС 16:00", "ВС 18:00", "ВС 19:30", "ВС 20:00"
   ];
 
   const schedulenzt = [
@@ -361,6 +372,11 @@ runAutomation();`;
 
   document.getElementById('push4').addEventListener('click', function() {
     schedule = schedule4;
+    updateOutput();
+  });
+
+  document.getElementById('push5').addEventListener('click', function() {
+    schedule = schedule5;
     updateOutput();
   });
 
