@@ -3,103 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Генератор кода</title>
-  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  <style>
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      position: relative;
-    }
-    .input-group {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .output-zone {
-      width: 100%;
-      height: 300px;
-      resize: none;
-      font-family: monospace;
-    }
-    .button-right {
-      min-width: 100px;
-      white-space: nowrap;
-    }
-    .buttons-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin: 20px 0;
-    }
-    .buttons-container button {
-      min-width: 120px;
-      height: 36px;
-      margin: 5px;
-      font-weight: 500;
-      text-transform: none;
-      background-color: #f5f5f5;
-      color: #333;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .buttons-container button:hover {
-      background-color: #e0e0e0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .buttons-container button:active {
-      background-color: #d0d0d0;
-    }
-    .version {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 12px;
-      color: #666;
-      font-family: monospace;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
-<div class="container mdl-shadow--2dp mdl-color--white mdl-grid">
-  <div class="version">v1.1</div>
+<div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.2</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
-  <div class="input-group mdl-cell mdl-cell--12-col">
-    <textarea class="mdl-textfield__input" id="text1" placeholder="Текст 1" rows="6"></textarea>
-    <textarea class="mdl-textfield__input" id="text2" placeholder="Текст 2" rows="6"></textarea>
-    <button id="createBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored button-right">
-      Создать
-    </button>
+  <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
+    <div class="flex-1 flex flex-col">
+      <textarea class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[96px] font-mono" id="text1" placeholder="Текст 1" rows="6"></textarea>
+      <div class="text-xs text-gray-500 mt-1 text-right" id="counter1">0 строк</div>
+    </div>
+    <div class="flex-1 flex flex-col">
+      <textarea class="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[96px] font-mono" id="text2" placeholder="Текст 2" rows="6"></textarea>
+      <div class="text-xs text-gray-500 mt-1 text-right" id="counter2">0 строк</div>
+    </div>
+    <button id="createBtn" class="ml-0 md:ml-4 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition hidden">Создать</button>
   </div>
 
   <!-- Вторая строка: вывод всего кода -->
-  <div class="mdl-cell mdl-cell--12-col">
-    <label for="output">Код для вставки:</label>
-    <textarea id="output" class="mdl-textfield__input output-zone" readonly></textarea>
+  <div class="mb-6">
+    <label for="output" class="block mb-2 text-gray-700 font-medium">Код для вставки:</label>
+    <textarea id="output" class="w-full h-72 border border-gray-300 rounded-lg p-3 font-mono bg-gray-50 resize-y" readonly></textarea>
   </div>
 
   <!-- Третья строка: кнопки для переключения пушей -->
-  <div class="buttons-container mdl-cell mdl-cell--12-col">
-    <button id="pushnzt" class="mdl-button mdl-js-button mdl-button--raised">nzt пуши</button>
-    <button id="push3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша в день</button>
-    <button id="push4" class="mdl-button mdl-js-button mdl-button--raised">4 пуша в день</button>
-    <button id="push5" class="mdl-button mdl-js-button mdl-button--raised">5 пушей в день</button>
-    <button id="pushdato" class="mdl-button mdl-js-button mdl-button--raised">10 пушей</button>
-    <button id="pushmonth" class="mdl-button mdl-js-button mdl-button--raised">4 пуша месяц</button>
-    <button id="pushmonth3" class="mdl-button mdl-js-button mdl-button--raised">3 пуша месяц</button>
+  <div class="flex flex-wrap gap-3 justify-center mb-6">
+    <button id="pushnzt" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">nzt пуши</button>
+    <button id="push3" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">3 пуша в день</button>
+    <button id="push4" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">4 пуша в день</button>
+    <button id="push5" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">5 пушей в день</button>
+    <button id="pushdato" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">10 пушей</button>
+    <button id="pushmonth" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">4 пуша месяц</button>
+    <button id="pushmonth3" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">3 пуша месяц</button>
   </div>
 
   <!-- Четвертая строка: кнопка скопировать -->
-  <div class="mdl-cell mdl-cell--12-col" style="text-align: right;">
-    <button id="copyBtn" class="mdl-button mdl-js-button mdl-button--outlined">
-      Скопировать
-    </button>
+  <div class="flex justify-end">
+    <button id="copyBtn" class="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition">Скопировать</button>
   </div>
 </div>
 
@@ -349,21 +292,19 @@ runAutomation();`;
     document.getElementById('output').value = generateCode();
   }
 
-  document.getElementById('createBtn').addEventListener('click', function() {
+  function syncArraysAndUpdate() {
     const text1Lines = document.getElementById('text1').value.trim().split('\n').map(line => line.trim()).filter(line => line);
     const text2Lines = document.getElementById('text2').value.trim().split('\n').map(line => line.trim()).filter(line => line);
+    array1 = text1Lines;
+    array2 = text2Lines;
+    updateOutput();
+  }
 
-    if (text1Lines.length === text2Lines.length && text1Lines.length > 0) {
-      array1 = text1Lines;
-      array2 = text2Lines;
-      updateOutput();
+  document.getElementById('text1').addEventListener('input', syncArraysAndUpdate);
+  document.getElementById('text2').addEventListener('input', syncArraysAndUpdate);
 
-      document.getElementById('text1').value = '';
-      document.getElementById('text2').value = '';
-    } else {
-      alert('Количество строк должно совпадать и быть больше нуля!');
-    }
-  });
+  // Оставляем кнопку для удобства, но она просто обновляет код
+  document.getElementById('createBtn').addEventListener('click', syncArraysAndUpdate);
 
   document.getElementById('push3').addEventListener('click', function() {
     schedule = schedule3;
@@ -404,8 +345,28 @@ runAutomation();`;
     const output = document.getElementById('output');
     output.select();
     document.execCommand('copy');
-    alert('Код скопирован!');
+    const copyBtn = document.getElementById('copyBtn');
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Скопировано!';
+    copyBtn.disabled = true;
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+      copyBtn.disabled = false;
+    }, 1500);
   });
+
+  // Счетчики строк для textarea
+  function updateCounters() {
+    const text1 = document.getElementById('text1').value;
+    const text2 = document.getElementById('text2').value;
+    const count1 = text1.trim() === '' ? 0 : text1.split('\n').filter(line => line.trim() !== '').length;
+    const count2 = text2.trim() === '' ? 0 : text2.split('\n').filter(line => line.trim() !== '').length;
+    document.getElementById('counter1').textContent = count1 + ' строк';
+    document.getElementById('counter2').textContent = count2 + ' строк';
+  }
+  document.getElementById('text1').addEventListener('input', updateCounters);
+  document.getElementById('text2').addEventListener('input', updateCounters);
+  updateCounters();
 
   updateOutput();
 </script>
