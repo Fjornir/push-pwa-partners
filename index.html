@@ -31,13 +31,13 @@
 
   <!-- Третья строка: кнопки для переключения пушей -->
   <div class="flex flex-wrap gap-3 justify-center mb-6">
-    <button id="pushnzt" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">nzt пуши</button>
-    <button id="push3" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">3 пуша в день</button>
-    <button id="push4" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">4 пуша в день</button>
-    <button id="push5" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">5 пушей в день</button>
-    <button id="pushdato" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">10 пушей</button>
-    <button id="pushmonth" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">4 пуша месяц</button>
-    <button id="pushmonth3" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium hover:bg-gray-200 transition">3 пуша месяц</button>
+    <button id="pushnzt" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">nzt пуши</button>
+    <button id="push3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша в день</button>
+    <button id="push4" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша в день</button>
+    <button id="push5" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">5 пушей в день</button>
+    <button id="pushdato" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">10 пушей</button>
+    <button id="pushmonth" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша месяц</button>
+    <button id="pushmonth3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша месяц</button>
   </div>
 
   <!-- Четвертая строка: кнопка скопировать -->
@@ -306,39 +306,66 @@ runAutomation();`;
   // Оставляем кнопку для удобства, но она просто обновляет код
   document.getElementById('createBtn').addEventListener('click', syncArraysAndUpdate);
 
+  // Выделение выбранной кнопки расписания
+  const scheduleBtnIds = [
+    'pushnzt', 'push3', 'push4', 'push5', 'pushdato', 'pushmonth', 'pushmonth3'
+  ];
+  function setActiveScheduleBtn(activeId) {
+    scheduleBtnIds.forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      if (id === activeId) {
+        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.remove('bg-gray-100', 'text-gray-800');
+      } else {
+        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.add('bg-gray-100', 'text-gray-800');
+      }
+    });
+  }
+  // По умолчанию выделяем 4 пуша в день
+  setActiveScheduleBtn('push4');
+
   document.getElementById('push3').addEventListener('click', function() {
     schedule = schedule3;
     updateOutput();
+    setActiveScheduleBtn('push3');
   });
 
   document.getElementById('push4').addEventListener('click', function() {
     schedule = schedule4;
     updateOutput();
+    setActiveScheduleBtn('push4');
   });
 
   document.getElementById('push5').addEventListener('click', function() {
     schedule = schedule5;
     updateOutput();
+    setActiveScheduleBtn('push5');
   });
 
   document.getElementById('pushnzt').addEventListener('click', function() {
     schedule = schedulenzt;
     updateOutput();
+    setActiveScheduleBtn('pushnzt');
   });
 
    document.getElementById('pushdato').addEventListener('click', function() {
     schedule = scheduledato;
     updateOutput();
+    setActiveScheduleBtn('pushdato');
   });
 
   document.getElementById('pushmonth').addEventListener('click', function() {
     schedule = scheduleMonth;
     updateOutput();
+    setActiveScheduleBtn('pushmonth');
   });
 
   document.getElementById('pushmonth3').addEventListener('click', function() {
     schedule = scheduleMonth3;
     updateOutput();
+    setActiveScheduleBtn('pushmonth3');
   });
 
   document.getElementById('copyBtn').addEventListener('click', function() {
@@ -349,6 +376,12 @@ runAutomation();`;
     const originalText = copyBtn.textContent;
     copyBtn.textContent = 'Скопировано!';
     copyBtn.disabled = true;
+    // Очищаем поля ввода
+    document.getElementById('text1').value = '';
+    document.getElementById('text2').value = '';
+    // Обновляем счетчики и код
+    updateCounters();
+    syncArraysAndUpdate();
     setTimeout(() => {
       copyBtn.textContent = originalText;
       copyBtn.disabled = false;
