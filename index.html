@@ -35,6 +35,7 @@
     <button id="push3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша в день</button>
     <button id="push4" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша в день</button>
     <button id="push5" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">5 пушей в день</button>
+    <button id="push6" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">6 пушей в день</button>
     <button id="pushdato" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">10 пушей</button>
     <button id="pushmonth" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша месяц</button>
     <button id="pushmonth3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша месяц</button>
@@ -115,6 +116,16 @@
     "ПТ 10:00", "ПТ 14:00", "ПТ 18:00",
     "СБ 10:00", "СБ 14:00", "СБ 18:00",
     "ВС 10:00", "ВС 14:00", "ВС 18:00"
+  ];
+
+  const schedule6 = [
+    "ПН 12:00", "ПН 14:00", "ПН 16:00", "ПН 18:00", "ПН 19:30", "ПН 20:00",
+    "ВТ 12:00", "ВТ 14:00", "ВТ 16:00", "ВТ 18:00", "ВТ 19:30", "ВТ 20:00",
+    "СР 12:00", "СР 14:00", "СР 16:00", "СР 18:00", "СР 19:30", "СР 20:00",
+    "ЧТ 12:00", "ЧТ 14:00", "ЧТ 16:00", "ЧТ 18:00", "ЧТ 19:30", "ЧТ 20:00",
+    "ПТ 12:00", "ПТ 14:00", "ПТ 16:00", "ПТ 18:00", "ПТ 19:30", "ПТ 20:00",
+    "СБ 12:00", "СБ 14:00", "СБ 16:00", "СБ 18:00", "СБ 19:30", "СБ 20:00",
+    "ВС 12:00", "ВС 14:00", "ВС 16:00", "ВС 18:00", "ВС 19:30", "ВС 20:00"
   ];
 
   let schedule = schedule4; // По умолчанию отображаем 4 пуша в день
@@ -308,7 +319,7 @@ runAutomation();`;
 
   // Выделение выбранной кнопки расписания
   const scheduleBtnIds = [
-    'pushnzt', 'push3', 'push4', 'push5', 'pushdato', 'pushmonth', 'pushmonth3'
+    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'pushdato', 'pushmonth', 'pushmonth3'
   ];
   function setActiveScheduleBtn(activeId) {
     scheduleBtnIds.forEach(id => {
@@ -342,6 +353,12 @@ runAutomation();`;
     schedule = schedule5;
     updateOutput();
     setActiveScheduleBtn('push5');
+  });
+
+  document.getElementById('push6').addEventListener('click', function() {
+    schedule = schedule6;
+    updateOutput();
+    setActiveScheduleBtn('push6');
   });
 
   document.getElementById('pushnzt').addEventListener('click', function() {
