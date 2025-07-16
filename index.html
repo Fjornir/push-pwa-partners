@@ -248,33 +248,40 @@ async function runAutomation() {
     addButton.click();
     await delay(500);
 
-    const daySelectButton = getElementByXPath('//*[@id="app"]/main/section/div[4]/div/div/div/div/form/div[1]/div[1]/div[1]/div/button');
+    const daySelectButton = getElementByXPath('//*[@id="app"]/div/div/div/div/form/div[1]/div[1]/div[1]/div');
     if (!daySelectButton) return console.error("❌ Кнопка выбора дня недели не найдена");
     daySelectButton.click();
     await delay(300);
 
-    const listItems = Array.from(document.querySelectorAll('li.select__dropdown-item'));
-    const matchedItem = listItems.find(li => li.textContent.trim().toUpperCase() === weekday);
+    // Новый способ поиска дня недели
+    const dropdown = document.querySelector('ul.select__dropdown.select__dropdown--under');
+    if (!dropdown) {
+      continue;
+    }
+    const listItems = Array.from(dropdown.querySelectorAll('li.select-item'));
+    const matchedItem = listItems.find(li => {
+      const span = li.querySelector('span');
+      return span && span.textContent.trim().toUpperCase() === weekday;
+    });
     if (!matchedItem) {
-      console.warn(\`❗ День "\${weekday}" не найден\`);
       continue;
     }
     matchedItem.click();
     await delay(300);
 
-    const timeInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[1]/div[1]/div[2]/input');
+    const timeInput = document.getElementById('push_time');
     if (timeInput) {
       timeInput.value = time;
       timeInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    const headerInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[1]/textarea');
+    const headerInput = document.getElementById('push_header');
     if (headerInput) {
       headerInput.value = header;
       headerInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    const contentInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[2]/textarea');
+    const contentInput = document.getElementById('push_content');
     if (contentInput) {
       contentInput.value = content;
       contentInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -282,7 +289,7 @@ async function runAutomation() {
 
     await delay(300);
 
-    const saveButton = getElementByXPath('//*[@id="app"]/main/section/div[4]/div/div/div/div/form/div[1]/div[3]/div/button');
+    const saveButton = getElementByXPath('/html/body/div/div/div/div/form/div[1]/div[3]/div/button');
     if (saveButton) {
       saveButton.click();
     } else {
