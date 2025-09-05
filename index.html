@@ -8,7 +8,7 @@
 <body>
 
 <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
-  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.4</div>
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.5</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
@@ -253,17 +253,19 @@ async function runAutomation() {
     daySelectButton.click();
     await delay(300);
 
-    // Новый способ поиска дня недели
-    const dropdown = document.querySelector('ul.select__dropdown.select__dropdown--under');
+    // Новый способ поиска дня недели (без абсолютного XPath)
+    // Ищем видимый дропдаун по классам и выбираем пункт по тексту
+    const dropdown = document.querySelector('.select-base__dropdown.select-base__dropdown--under')
+      || document.querySelector('.select-base__dropdown');
     if (!dropdown) {
+      console.warn("❗ Выпадающий список дней не найден");
       continue;
     }
-    const listItems = Array.from(dropdown.querySelectorAll('li.select-item'));
-    const matchedItem = listItems.find(li => {
-      const span = li.querySelector('span');
-      return span && span.textContent.trim().toUpperCase() === weekday;
-    });
+    const candidates = Array.from(dropdown.querySelectorAll('li, [role="option"], .select-item'));
+    const normalized = s => s.replace(/\s+/g, ' ').trim().toUpperCase();
+    const matchedItem = candidates.find(el => normalized(el.textContent) === weekday);
     if (!matchedItem) {
+      console.warn("❗ День недели не найден в списке:", weekday);
       continue;
     }
     matchedItem.click();
