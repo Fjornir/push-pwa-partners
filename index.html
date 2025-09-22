@@ -8,7 +8,7 @@
 <body>
 
 <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
-  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.5</div>
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.6</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
@@ -39,6 +39,7 @@
     <button id="pushdato" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">10 пушей</button>
     <button id="pushmonth" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша месяц</button>
     <button id="pushmonth3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша месяц</button>
+    <button id="pushmonth2" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">2 пуша месяц</button>
   </div>
 
   <!-- Четвертая строка: кнопка скопировать -->
@@ -118,6 +119,16 @@
     "ВС 10:00", "ВС 14:00", "ВС 18:00"
   ];
 
+  const scheduleMonth2 = [
+    "ПН 12:00", "ПН 18:00",
+    "ВТ 12:00", "ВТ 18:00",
+    "СР 12:00", "СР 18:00",
+    "ЧТ 12:00", "ЧТ 18:00",
+    "ПТ 12:00", "ПТ 18:00",
+    "СБ 12:00", "СБ 18:00",
+    "ВС 12:00", "ВС 18:00"
+  ];
+
   const schedule6 = [
     "ПН 12:00", "ПН 14:00", "ПН 16:00", "ПН 18:00", "ПН 19:30", "ПН 20:00",
     "ВТ 12:00", "ВТ 14:00", "ВТ 16:00", "ВТ 18:00", "ВТ 19:30", "ВТ 20:00",
@@ -180,6 +191,20 @@
         const content3 = array2[timeGroup * 3 + 2] || "";
         
         return `${day},${time},"{Push=(${header1}|${header2}|${header3})}","{Push=(${content1}|${content2}|${content3})}"`;
+      } else if (schedule === scheduleMonth2) {
+        // Определяем группу на основе времени
+        let timeGroup;
+        if (time === "12:00") timeGroup = 0;      // день
+        else if (time === "18:00") timeGroup = 1; // вечер
+        
+        // Получаем 2 значения для заголовка и контента для текущей временной группы
+        const header1 = array1[timeGroup * 2] || "";
+        const header2 = array1[timeGroup * 2 + 1] || "";
+        
+        const content1 = array2[timeGroup * 2] || "";
+        const content2 = array2[timeGroup * 2 + 1] || "";
+        
+        return `${day},${time},"{Push=(${header1}|${header2})}","{Push=(${content1}|${content2})}"`;
       }
       
       return `${day},${time},"${text1}","${text2}"`;
@@ -328,7 +353,7 @@ runAutomation();`;
 
   // Выделение выбранной кнопки расписания
   const scheduleBtnIds = [
-    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'pushdato', 'pushmonth', 'pushmonth3'
+    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'pushdato', 'pushmonth', 'pushmonth2', 'pushmonth3'
   ];
   function setActiveScheduleBtn(activeId) {
     scheduleBtnIds.forEach(id => {
@@ -388,18 +413,24 @@ runAutomation();`;
     setActiveScheduleBtn('pushmonth');
   });
 
-  document.getElementById('pushmonth3').addEventListener('click', function() {
-    schedule = scheduleMonth3;
+  document.getElementById('pushmonth2').addEventListener('click', function() {
+    schedule = scheduleMonth2;
     updateOutput();
-    setActiveScheduleBtn('pushmonth3');
+    setActiveScheduleBtn('pushmonth2');
   });
 
-  document.getElementById('copyBtn').addEventListener('click', function() {
-    const output = document.getElementById('output');
-    output.select();
-    document.execCommand('copy');
-    const copyBtn = document.getElementById('copyBtn');
-    const originalText = copyBtn.textContent;
+document.getElementById('copyBtn').addEventListener('click', function() {
+  const output = document.getElementById('output');
+  output.select();
+  document.execCommand('copy');
+  const copyBtn = document.getElementById('copyBtn');
+  const originalText = copyBtn.textContent;
+  copyBtn.textContent = 'Скопировано!';
+  copyBtn.disabled = true;
+  // Очищаем поля ввода
+  document.getElementById('text1').value = '';
+  document.getElementById('text2').value = '';
+  // Обновляем счетчики и код
     copyBtn.textContent = 'Скопировано!';
     copyBtn.disabled = true;
     // Очищаем поля ввода
