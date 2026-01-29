@@ -40,6 +40,7 @@
     <button id="pushmonth" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша месяц</button>
     <button id="pushmonth3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша месяц</button>
     <button id="pushmonth2" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">2 пуша месяц</button>
+    <button id="pushweekend" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3/4 будни/выходные</button>
   </div>
 
   <!-- Четвертая строка: кнопка скопировать -->
@@ -127,6 +128,16 @@
     "ПТ 12:00", "ПТ 18:00",
     "СБ 12:00", "СБ 18:00",
     "ВС 12:00", "ВС 18:00"
+  ];
+
+  const scheduleWeekend = [
+    "ПН 14:16", "ПН 18:31", "ПН 21:36",
+    "ВТ 14:18", "ВТ 18:33", "ВТ 21:38",
+    "СР 14:20", "СР 18:35", "СР 21:40",
+    "ЧТ 14:22", "ЧТ 18:37", "ЧТ 21:42",
+    "ПТ 14:24", "ПТ 18:39", "ПТ 21:43",
+    "СБ 10:20", "СБ 14:15", "СБ 18:30", "СБ 21:35",
+    "ВС 10:22", "ВС 14:17", "ВС 18:32", "ВС 21:37"
   ];
 
   const schedule6 = [
@@ -353,7 +364,7 @@ runAutomation();`;
 
   // Выделение выбранной кнопки расписания
   const scheduleBtnIds = [
-    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'pushdato', 'pushmonth', 'pushmonth2', 'pushmonth3'
+    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'pushdato', 'pushmonth', 'pushmonth2', 'pushmonth3', 'pushweekend'
   ];
   function setActiveScheduleBtn(activeId) {
     scheduleBtnIds.forEach(id => {
@@ -423,6 +434,12 @@ runAutomation();`;
     schedule = scheduleMonth3;
     updateOutput();
     setActiveScheduleBtn('pushmonth3');
+  });
+
+  document.getElementById('pushweekend').addEventListener('click', function() {
+    schedule = scheduleWeekend;
+    updateOutput();
+    setActiveScheduleBtn('pushweekend');
   });
 
 document.getElementById('copyBtn').addEventListener('click', function() {
