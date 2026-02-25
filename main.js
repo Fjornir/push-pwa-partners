@@ -95,7 +95,7 @@ async function runAutomation() {
 
     await delay(300);
 
-    const saveButton = getElementByXPath('/html/body/div[2]/div/div/div/form/div[1]/div[3]/div/div/button');
+    const saveButton = getElementByXPath('//*[@id="app"]/div[2]/div/div/div/form/div[1]/div[3]/div/div/button');
     if (saveButton) {
       saveButton.click();
     } else {
