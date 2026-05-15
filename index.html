@@ -8,7 +8,7 @@
 <body>
 
 <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
-  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.6.3</div>
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.6.4</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
@@ -32,6 +32,8 @@
   <!-- Третья строка: кнопки для переключения пушей -->
   <div class="flex flex-wrap gap-3 justify-center mb-6">
     <button id="pushnzt" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">nzt пуши</button>
+    <button id="push1" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">1 пуш в день</button>
+    <button id="push2" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">2 пуша в день</button>
     <button id="push3" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">3 пуша в день</button>
     <button id="push4" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">4 пуша в день</button>
     <button id="push5" class="schedule-btn px-4 py-2 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 font-medium transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 active:scale-95">5 пушей в день</button>
@@ -51,7 +53,27 @@
 </div>
 
 <script>
-  // Массивы расписания для 3 и 4 пушей в день
+  // Массивы расписания для 1, 2, 3 и 4 пушей в день
+  const schedule1 = [
+    "ПН 18:00",
+    "ВТ 18:00",
+    "СР 18:00",
+    "ЧТ 18:00",
+    "ПТ 18:00",
+    "СБ 18:00",
+    "ВС 18:00"
+  ];
+
+  const schedule2 = [
+    "ПН 14:00", "ПН 20:00",
+    "ВТ 14:00", "ВТ 20:00",
+    "СР 14:00", "СР 20:00",
+    "ЧТ 14:00", "ЧТ 20:00",
+    "ПТ 14:00", "ПТ 20:00",
+    "СБ 14:00", "СБ 20:00",
+    "ВС 14:00", "ВС 20:00"
+  ];
+
   const schedule3 = [
     "ПН 14:16", "ПН 18:31", "ПН 21:36",
     "ВТ 14:18", "ВТ 18:33", "ВТ 21:38",
@@ -375,7 +397,7 @@ runAutomation();`;
 
   // Выделение выбранной кнопки расписания
   const scheduleBtnIds = [
-    'pushnzt', 'push3', 'push4', 'push5', 'push6', 'push8', 'pushdato', 'pushmonth', 'pushmonth2', 'pushmonth3', 'pushweekend'
+    'pushnzt', 'push1', 'push2', 'push3', 'push4', 'push5', 'push6', 'push8', 'pushdato', 'pushmonth', 'pushmonth2', 'pushmonth3', 'pushweekend'
   ];
   function setActiveScheduleBtn(activeId) {
     scheduleBtnIds.forEach(id => {
@@ -392,6 +414,18 @@ runAutomation();`;
   }
   // По умолчанию выделяем 4 пуша в день
   setActiveScheduleBtn('push4');
+
+  document.getElementById('push1').addEventListener('click', function() {
+    schedule = schedule1;
+    updateOutput();
+    setActiveScheduleBtn('push1');
+  });
+
+  document.getElementById('push2').addEventListener('click', function() {
+    schedule = schedule2;
+    updateOutput();
+    setActiveScheduleBtn('push2');
+  });
 
   document.getElementById('push3').addEventListener('click', function() {
     schedule = schedule3;
