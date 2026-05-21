@@ -1,4 +1,5 @@
 const csvData = ``.trim();
+const imageBase64 = ``; // Base64 изображения для загрузки
 
 function parseMessyCSV(csv) {
   const lines = csv.trim().split('\n');
@@ -50,6 +51,66 @@ function getElementByXPath(path) {
   return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
+// Функция ожидания появления элемента
+async function waitForElement(selector, timeout = 5000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeout) {
+    const element = document.querySelector(selector);
+    if (element) return element;
+    await delay(100);
+  }
+  return null;
+}
+
+// Функция для загрузки изображения
+async function uploadImage(base64Data) {
+  if (!base64Data) return;
+  
+  try {
+    // Находим кнопку загрузки изображения
+    const uploadButton = document.querySelector('label.push__upload-image-button[for="push_image"]');
+    if (!uploadButton) {
+      console.warn("⚠️ Кнопка загрузки изображения не найдена");
+      return;
+    }
+    
+    // Находим скрытый input для файла
+    const fileInput = document.getElementById('push_image');
+    if (!fileInput) {
+      console.warn("⚠️ Input для загрузки изображения не найден");
+      return;
+    }
+    
+    // Конвертируем base64 в Blob
+    const response = await fetch(base64Data);
+    const blob = await response.blob();
+    
+    // Создаем File объект
+    const file = new File([blob], "push_image.png", { type: blob.type });
+    
+    // Создаем DataTransfer для установки файла в input
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    fileInput.files = dataTransfer.files;
+    
+    // Триггерим событие change
+    fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    console.log("✅ Изображение загружено, ожидаем превью...");
+    
+    // Ждем появления превью изображения
+    const preview = await waitForElement('.push__image-previews-wrap .push__image-preview');
+    if (preview) {
+      console.log("✅ Превью изображения появилось");
+    } else {
+      console.warn("⚠️ Превью изображения не появилось, продолжаем...");
+    }
+    
+    await delay(300);
+  } catch (error) {
+    console.error("❌ Ошибка при загрузке изображения:", error);
+  }
+}
 
 async function runAutomation() {
   for (let i = 0; i < rows.length; i++) {
@@ -95,7 +156,14 @@ async function runAutomation() {
 
     await delay(300);
 
-    const saveButton = getElementByXPath('//*[@id="app"]/div[2]/div/div/div/form/div[1]/div[3]/div/div/button');
+    // Загружаем изображение, если оно указано
+    if (imageBase64) {
+      await uploadImage(imageBase64);
+    }
+
+    // Ищем кнопку "Добавить пуш" по классу и тексту
+    const saveButton = Array.from(document.querySelectorAll('button[type="submit"].button--variant-primary'))
+      .find(btn => btn.textContent.includes('Добавить пуш'));
     if (saveButton) {
       saveButton.click();
     } else {

@@ -8,7 +8,7 @@
 <body>
 
 <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
-  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.6.4</div>
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.7</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
@@ -21,6 +21,22 @@
       <div class="text-xs text-gray-500 mt-1 text-right" id="counter2">0 строк</div>
     </div>
     <button id="createBtn" class="ml-0 md:ml-4 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition hidden">Создать</button>
+  </div>
+
+  <!-- Блок загрузки изображения -->
+  <div class="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+    <label class="block mb-2 text-gray-700 font-medium">Изображение для пушей (опционально):</label>
+    <div class="flex flex-col md:flex-row gap-4 items-start">
+      <div class="flex-1">
+        <input type="file" id="imageInput" accept="image/*" class="hidden">
+        <button id="uploadBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">Выбрать изображение</button>
+        <button id="clearImageBtn" class="ml-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition hidden">Удалить</button>
+        <div id="imageStatus" class="mt-2 text-sm text-gray-600"></div>
+      </div>
+      <div id="imagePreview" class="hidden">
+        <img id="previewImg" class="max-w-xs max-h-32 rounded-lg border border-gray-300" alt="Preview">
+      </div>
+    </div>
   </div>
 
   <!-- Вторая строка: вывод всего кода -->
@@ -187,6 +203,7 @@
   let array1 = [];
   let array2 = [];
   let pushesPerDay = 4; // по умолчанию 4 пуша в день
+  let imageBase64 = ''; // base64 изображения
 
   function generateCode() {
     let result = [];
@@ -256,6 +273,7 @@
 
     // Основной код
     return `const csvData = \`\n${csvData}\n\`;
+const imageBase64 = \`${imageBase64}\`; // Base64 изображения для загрузки
   
 function parseMessyCSV(csv) {
   const lines = csv.trim().split('\\n');
@@ -305,6 +323,67 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 function getElementByXPath(path) {
   return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
+// Функция ожидания появления элемента
+async function waitForElement(selector, timeout = 5000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeout) {
+    const element = document.querySelector(selector);
+    if (element) return element;
+    await delay(100);
+  }
+  return null;
+}
+
+// Функция для загрузки изображения
+async function uploadImage(base64Data) {
+  if (!base64Data) return;
+  
+  try {
+    // Находим кнопку загрузки изображения
+    const uploadButton = document.querySelector('label.push__upload-image-button[for="push_image"]');
+    if (!uploadButton) {
+      console.warn("⚠️ Кнопка загрузки изображения не найдена");
+      return;
+    }
+    
+    // Находим скрытый input для файла
+    const fileInput = document.getElementById('push_image');
+    if (!fileInput) {
+      console.warn("⚠️ Input для загрузки изображения не найден");
+      return;
+    }
+    
+    // Конвертируем base64 в Blob
+    const response = await fetch(base64Data);
+    const blob = await response.blob();
+    
+    // Создаем File объект
+    const file = new File([blob], "push_image.png", { type: blob.type });
+    
+    // Создаем DataTransfer для установки файла в input
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    fileInput.files = dataTransfer.files;
+    
+    // Триггерим событие change
+    fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    console.log("✅ Изображение загружено, ожидаем превью...");
+    
+    // Ждем появления превью изображения
+    const preview = await waitForElement('.push__image-previews-wrap .push__image-preview');
+    if (preview) {
+      console.log("✅ Превью изображения появилось");
+    } else {
+      console.warn("⚠️ Превью изображения не появилось, продолжаем...");
+    }
+    
+    await delay(300);
+  } catch (error) {
+    console.error("❌ Ошибка при загрузке изображения:", error);
+  }
 }
 
 async function runAutomation() {
@@ -360,7 +439,14 @@ async function runAutomation() {
 
     await delay(300);
 
-    const saveButton = getElementByXPath('/html/body/div[2]/div/div/div/form/div[1]/div[3]/div/div/button');
+    // Загружаем изображение, если оно указано
+    if (imageBase64) {
+      await uploadImage(imageBase64);
+    }
+
+    // Ищем кнопку "Добавить пуш" по классу и тексту
+    const saveButton = Array.from(document.querySelectorAll('button[type="submit"].button--variant-primary'))
+      .find(btn => btn.textContent.includes('Добавить пуш'));
     if (saveButton) {
       saveButton.click();
     } else {
@@ -533,6 +619,46 @@ document.getElementById('copyBtn').addEventListener('click', function() {
   updateCounters();
 
   updateOutput();
+
+  // Обработка загрузки изображения
+  document.getElementById('uploadBtn').addEventListener('click', function() {
+    document.getElementById('imageInput').click();
+  });
+
+  document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // Ограничение 5MB
+        alert('Файл слишком большой. Максимальный размер: 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        imageBase64 = event.target.result;
+        document.getElementById('imageStatus').textContent = `Загружено: ${file.name}`;
+        document.getElementById('imageStatus').classList.add('text-green-600');
+        document.getElementById('imageStatus').classList.remove('text-gray-600');
+        
+        // Показываем превью
+        document.getElementById('previewImg').src = imageBase64;
+        document.getElementById('imagePreview').classList.remove('hidden');
+        document.getElementById('clearImageBtn').classList.remove('hidden');
+        
+        updateOutput();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('clearImageBtn').addEventListener('click', function() {
+    imageBase64 = '';
+    document.getElementById('imageInput').value = '';
+    document.getElementById('imageStatus').textContent = '';
+    document.getElementById('imagePreview').classList.add('hidden');
+    document.getElementById('clearImageBtn').classList.add('hidden');
+    updateOutput();
+  });
 </script>
 
 </body>
