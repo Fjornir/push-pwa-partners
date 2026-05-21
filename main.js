@@ -67,6 +67,10 @@ async function uploadImage(base64Data) {
   if (!base64Data) return;
   
   try {
+    // Проверяем, есть ли уже превью (чтобы отследить новое)
+    const existingPreview = document.querySelector('.push__image-previews-wrap');
+    const hadPreview = existingPreview !== null;
+    
     // Находим кнопку загрузки изображения
     const uploadButton = document.querySelector('label.push__upload-image-button[for="push_image"]');
     if (!uploadButton) {
@@ -98,12 +102,39 @@ async function uploadImage(base64Data) {
     
     console.log("✅ Изображение загружено, ожидаем превью...");
     
-    // Ждем появления превью изображения
-    const preview = await waitForElement('.push__image-previews-wrap .push__image-preview');
-    if (preview) {
-      console.log("✅ Превью изображения появилось");
+    // Если превью уже было, ждем обновления src, иначе ждем появления элемента
+    if (hadPreview) {
+      // Запоминаем старый src
+      const oldPreview = document.querySelector('.push__image-previews-wrap .push__image-preview');
+      const oldSrc = oldPreview ? oldPreview.src : '';
+      
+      // Ждем изменения src изображения
+      const startTime = Date.now();
+      const timeout = 5000;
+      let srcChanged = false;
+      while (Date.now() - startTime < timeout) {
+        const preview = document.querySelector('.push__image-previews-wrap .push__image-preview');
+        if (preview && preview.src && preview.src !== oldSrc) {
+          // Ждем полной загрузки нового изображения
+          if (preview.complete && preview.naturalHeight > 0) {
+            console.log("✅ Превью изображения обновилось");
+            srcChanged = true;
+            break;
+          }
+        }
+        await delay(100);
+      }
+      if (!srcChanged) {
+        console.warn("⚠️ Превью изображения не обновилось, продолжаем...");
+      }
     } else {
-      console.warn("⚠️ Превью изображения не появилось, продолжаем...");
+      // Ждем появления превью изображения
+      const preview = await waitForElement('.push__image-previews-wrap .push__image-preview');
+      if (preview) {
+        console.log("✅ Превью изображения появилось");
+      } else {
+        console.warn("⚠️ Превью изображения не появилось, продолжаем...");
+      }
     }
     
     await delay(300);
