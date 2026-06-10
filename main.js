@@ -62,12 +62,14 @@ async function waitForElement(selector, timeout = 5000) {
   return null;
 }
 
-// Функция ожидания исчезновения элемента
+// Функция ожидания исчезновения/скрытия элемента
 async function waitForElementToDisappear(selector, timeout = 10000) {
   const startTime = Date.now();
   while (Date.now() - startTime < timeout) {
     const element = document.querySelector(selector);
     if (!element) return true;
+    const style = window.getComputedStyle(element);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return true;
     await delay(100);
   }
   return false;
@@ -195,6 +197,7 @@ async function processRow(weekdayRaw, time, header, content) {
 
 async function runAutomation() {
   const MAX_RETRIES = 3;
+  console.log(`🚀 Запуск, строк в CSV: ${rows.length}`);
 
   for (let i = 0; i < rows.length; i++) {
     const [weekdayRaw, time, header, content] = rows[i];
