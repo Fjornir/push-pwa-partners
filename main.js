@@ -129,15 +129,20 @@ async function runAutomation() {
     addButton.click();
     await delay(500);
 
-    const daySelectButton = getElementByXPath('//*[@id="app"]/main/section/div[4]/div/div/div/div/form/div[1]/div[1]/div[1]/div/button');
+    // Ищем кнопку дня по классу, не XPath
+    const daySelectButton = document.querySelector('.select-base__button');
     if (!daySelectButton) return console.error("❌ Кнопка выбора дня недели не найдена");
     daySelectButton.click();
-    await delay(300);
 
-    const listItems = Array.from(document.querySelectorAll('li.select__dropdown-item'));
+    // Ждём появления дропдауна (пробуем оба варианта класса)
+    let dropdownItem = await waitForElement('li.select-base__dropdown-item', 1000);
+    if (!dropdownItem) dropdownItem = await waitForElement('li.select__dropdown-item', 1000);
+    if (!dropdownItem) return console.error("❌ Выпадающий список дней не открылся");
+
+    const listItems = Array.from(document.querySelectorAll('li.select-base__dropdown-item, li.select__dropdown-item'));
     const matchedItem = listItems.find(li => li.textContent.trim().toUpperCase() === weekday);
     if (!matchedItem) {
-      console.warn(`❗ День "${weekday}" не найден`);
+      console.warn(`❗ День "${weekday}" не найден в списке: ${listItems.map(li => li.textContent.trim()).join(', ')}`);
       continue;
     }
     matchedItem.click();
