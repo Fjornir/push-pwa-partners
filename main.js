@@ -62,6 +62,17 @@ async function waitForElement(selector, timeout = 5000) {
   return null;
 }
 
+// Функция ожидания исчезновения элемента
+async function waitForElementToDisappear(selector, timeout = 10000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeout) {
+    const element = document.querySelector(selector);
+    if (!element) return true;
+    await delay(100);
+  }
+  return false;
+}
+
 // Функция для загрузки изображения
 async function uploadImage(base64Data) {
   if (!base64Data) return;
@@ -167,7 +178,10 @@ async function processRow(weekdayRaw, time, header, content) {
   if (!saveButton) throw new Error("Кнопка сохранения не найдена");
   saveButton.click();
 
-  await delay(1000);
+  // Ждём пока модалка закроется
+  const closed = await waitForElementToDisappear('.modal-content', 10000);
+  if (!closed) throw new Error("Форма не закрылась после сабмита");
+  await delay(300);
 }
 
 async function runAutomation() {
