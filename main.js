@@ -133,17 +133,21 @@ async function uploadImage(base64Data) {
 async function processRow(weekdayRaw, time, header, content) {
   const weekday = weekdayRaw.trim().toUpperCase();
 
+  console.log(`🔍 Ищем кнопку добавления...`);
   const addButton = getElementByXPath('//*[@id="app"]/main/section/div[2]/button[1]');
   if (!addButton) throw new Error("Кнопка добавления пуша не найдена");
   addButton.click();
+  console.log(`✅ Кликнули добавить, ждём форму...`);
 
   const daySelectButton = await waitForElement('.select-base__button', 2000);
   if (!daySelectButton) throw new Error("Кнопка выбора дня недели не найдена");
+  console.log(`✅ Форма открылась, кликаем день...`);
   daySelectButton.click();
 
   let dropdownItem = await waitForElement('li.select-base__dropdown-item', 1000);
   if (!dropdownItem) dropdownItem = await waitForElement('li.select__dropdown-item', 1000);
   if (!dropdownItem) throw new Error("Выпадающий список дней не открылся");
+  console.log(`✅ Дропдаун открылся`);
 
   const listItems = Array.from(document.querySelectorAll('li.select-base__dropdown-item, li.select__dropdown-item'));
   const matchedItem = listItems.find(li => li.textContent.trim().toUpperCase() === weekday);
@@ -176,11 +180,16 @@ async function processRow(weekdayRaw, time, header, content) {
   const saveButton = Array.from(document.querySelectorAll('button[type="submit"].button--variant-primary'))
     .find(btn => btn.textContent.includes('Добавить пуш'));
   if (!saveButton) throw new Error("Кнопка сохранения не найдена");
+  console.log(`✅ Кликаем сохранить, ждём закрытия модалки...`);
   saveButton.click();
 
   // Ждём пока модалка закроется
   const closed = await waitForElementToDisappear('.modal-content', 10000);
-  if (!closed) throw new Error("Форма не закрылась после сабмита");
+  if (!closed) {
+    console.warn(`⚠️ Модалка не закрылась за 10с, .modal-content в DOM: ${!!document.querySelector('.modal-content')}`);
+    throw new Error("Форма не закрылась после сабмита");
+  }
+  console.log(`✅ Модалка закрылась`);
   await delay(300);
 }
 
