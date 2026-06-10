@@ -119,71 +119,77 @@ async function uploadImage(base64Data) {
   }
 }
 
+async function processRow(weekdayRaw, time, header, content) {
+  const weekday = weekdayRaw.trim().toUpperCase();
+
+  const addButton = getElementByXPath('//*[@id="app"]/main/section/div[2]/button[1]');
+  if (!addButton) throw new Error("Кнопка добавления пуша не найдена");
+  addButton.click();
+
+  const daySelectButton = await waitForElement('.select-base__button', 2000);
+  if (!daySelectButton) throw new Error("Кнопка выбора дня недели не найдена");
+  daySelectButton.click();
+
+  let dropdownItem = await waitForElement('li.select-base__dropdown-item', 1000);
+  if (!dropdownItem) dropdownItem = await waitForElement('li.select__dropdown-item', 1000);
+  if (!dropdownItem) throw new Error("Выпадающий список дней не открылся");
+
+  const listItems = Array.from(document.querySelectorAll('li.select-base__dropdown-item, li.select__dropdown-item'));
+  const matchedItem = listItems.find(li => li.textContent.trim().toUpperCase() === weekday);
+  if (!matchedItem) throw new Error(`День "${weekday}" не найден в списке: ${listItems.map(li => li.textContent.trim()).join(', ')}`);
+  matchedItem.click();
+  await delay(300);
+
+  const timeInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[1]/div[1]/div[2]/input');
+  if (timeInput) {
+    timeInput.value = time;
+    timeInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  const headerInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[1]/textarea');
+  if (headerInput) {
+    headerInput.value = header;
+    headerInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  const contentInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[2]/textarea');
+  if (contentInput) {
+    contentInput.value = content;
+    contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  await delay(300);
+
+  if (imageBase64) await uploadImage(imageBase64);
+
+  const saveButton = Array.from(document.querySelectorAll('button[type="submit"].button--variant-primary'))
+    .find(btn => btn.textContent.includes('Добавить пуш'));
+  if (!saveButton) throw new Error("Кнопка сохранения не найдена");
+  saveButton.click();
+
+  await delay(1000);
+}
+
 async function runAutomation() {
+  const MAX_RETRIES = 3;
+
   for (let i = 0; i < rows.length; i++) {
     const [weekdayRaw, time, header, content] = rows[i];
-    const weekday = weekdayRaw.trim().toUpperCase();
+    let success = false;
 
-    const addButton = getElementByXPath('//*[@id="app"]/main/section/div[2]/button[1]');
-    if (!addButton) return console.error("❌ Кнопка добавления пуша не найдена");
-    addButton.click();
-    await delay(500);
-
-    // Ищем кнопку дня по классу, не XPath
-    const daySelectButton = document.querySelector('.select-base__button');
-    if (!daySelectButton) return console.error("❌ Кнопка выбора дня недели не найдена");
-    daySelectButton.click();
-
-    // Ждём появления дропдауна (пробуем оба варианта класса)
-    let dropdownItem = await waitForElement('li.select-base__dropdown-item', 1000);
-    if (!dropdownItem) dropdownItem = await waitForElement('li.select__dropdown-item', 1000);
-    if (!dropdownItem) return console.error("❌ Выпадающий список дней не открылся");
-
-    const listItems = Array.from(document.querySelectorAll('li.select-base__dropdown-item, li.select__dropdown-item'));
-    const matchedItem = listItems.find(li => li.textContent.trim().toUpperCase() === weekday);
-    if (!matchedItem) {
-      console.warn(`❗ День "${weekday}" не найден в списке: ${listItems.map(li => li.textContent.trim()).join(', ')}`);
-      continue;
-    }
-    matchedItem.click();
-    await delay(300);
-
-    const timeInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[1]/div[1]/div[2]/input');
-    if (timeInput) {
-      timeInput.value = time;
-      timeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        await processRow(weekdayRaw, time, header, content);
+        console.log(`✅ [${i + 1}/${rows.length}] Строка добавлена`);
+        success = true;
+        break;
+      } catch (err) {
+        console.warn(`⚠️ [${i + 1}/${rows.length}] Попытка ${attempt}/${MAX_RETRIES}: ${err.message}`);
+        if (attempt < MAX_RETRIES) await delay(500);
+      }
     }
 
-    const headerInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[1]/textarea');
-    if (headerInput) {
-      headerInput.value = header;
-      headerInput.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    const contentInput = getElementByXPath('/html/body/main/section/div[4]/div/div/div/div/form/div[2]/div[1]/div[2]/textarea');
-    if (contentInput) {
-      contentInput.value = content;
-      contentInput.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    await delay(300);
-
-    // Загружаем изображение, если оно указано
-    if (imageBase64) {
-      await uploadImage(imageBase64);
-    }
-
-    // Ищем кнопку "Добавить пуш" по классу и тексту
-    const saveButton = Array.from(document.querySelectorAll('button[type="submit"].button--variant-primary'))
-      .find(btn => btn.textContent.includes('Добавить пуш'));
-    if (saveButton) {
-      saveButton.click();
-    } else {
-      console.warn("❗ Кнопка сохранения не найдена");
-      continue;
-    }
-
-    await delay(1000);
+    if (!success) console.error(`❌ [${i + 1}/${rows.length}] Строка пропущена после ${MAX_RETRIES} попыток`);
   }
 
   console.log("✅ Все строки из CSV обработаны");
