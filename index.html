@@ -8,7 +8,7 @@
 <body>
 
 <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg relative">
-  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.7.2</div>
+  <div class="absolute top-4 right-4 text-xs text-gray-400 font-mono">v1.8</div>
   
   <!-- Первая строка: два поля ввода и кнопка Создать -->
   <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
@@ -393,6 +393,18 @@ async function uploadImage(base64Data) {
   }
 }
 
+async function waitForElementToDisappear(selector, timeout = 10000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeout) {
+    const el = document.querySelector(selector);
+    if (!el) return true;
+    const style = window.getComputedStyle(el);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return true;
+    await delay(100);
+  }
+  return false;
+}
+
 async function runAutomation() {
   for (let i = 0; i < rows.length; i++) {
     const [weekdayRaw, time, header, content] = rows[i];
@@ -461,7 +473,8 @@ async function runAutomation() {
       continue;
     }
 
-    await delay(1000);
+    await waitForElementToDisappear('.modal-content', 15000);
+    await delay(300);
   }
 
   console.log("✅ Все строки из CSV обработаны");
